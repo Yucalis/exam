@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.auth.mapper.QuestionMapper">
+
+    <select id="queryTotal" parameterType="QuestionQuery" resultType="Long">
+        select count(*) from exam_questionbank e
+        <include refid="whereSql"></include>
+    </select>
+    
+    <select id="queryData" parameterType="QuestionQuery" resultMap="questionMap">
+        select e.*, u.id uid, u.username uname
+        from exam_questionbank e
+        join t_user u
+        on e.creatorId = u.id
+        <include refid="whereSql"></include>
+        order by e.createTime desc
+        limit #{offset}, #{page}
+    </select>
+
+<!--    上面的分页数据中 resultMap="questionMap" 和 id="questionMap" 的值相对应，也就是映射-->
+    <resultMap id="questionMap" type="Question">
+        <id column="id" property="id"></id>
+        <result column="uid" property="user.id"></result>
+        <result column="uname" property="user.username"></result>
+    </resultMap>
+
+    <sql id="whereSql">
+        <where>
+            <if test="questionTitle != null and questionTitle != ''">
+                and e.questionTitle like concat('%', #{questionTitle}, '%')
+            </if>
+        </where>
+    </sql>
+
+
+<!--    <select id="queryQuestionByQid" resultMap="xztQuestionMap">-->
+<!--        select * from exam_questionbank where id = #{qid}-->
+<!--    </select>-->
+<!--    <resultMap id="xztQuestionMap" type="Question">-->
+<!--        <id property="id" column="id"></id>-->
+<!--        <association property="questionXztOptions"-->
+<!--                     select="com.mz.auth.mapper.QuestionMapper.getQuestionOptionsByQid"-->
+<!--                     column="id">-->
+<!--        </association>-->
+<!--    </resultMap>-->
+
+
+</mapper>

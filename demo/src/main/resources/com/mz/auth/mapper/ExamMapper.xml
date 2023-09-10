@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.auth.mapper.ExamMapper">
+
+<!--void saveExamScoreDetail(@Param("scoreDetails") List<ExamScoreDetail> scoreDetails);-->
+    <insert id="saveExamScoreDetail">
+        insert into exam_scoredetail
+        values
+        <foreach collection="scoreDetails" item="scoreDetail" separator=",">
+            (null, #{scoreDetail.stuId}, #{scoreDetail.paperId}, #{scoreDetail.questionId},
+             #{scoreDetail.questionTitle}, #{scoreDetail.q_typeid},
+             #{scoreDetail.questionAnswer},#{scoreDetail.questionScore},
+             #{scoreDetail.correntAnswer},#{scoreDetail.correntScore})
+        </foreach>
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.auth.mapper.StuScoreMapper">
+
+<!--    StuPaperQuestion queryExamDetailRecords(Long paperId, Long stuId);-->
+    <select id="queryExamDetailRecords" resultMap="paperDetailMap">
+        select
+        p.id, p.name, es.questionId, es.questionTitle, es.questionAnswer stuAnswer,
+        es.questionScore grade, es.q_typeid, es.correntAnswer, es.correntScore,
+        op.id opid, op.optionA, op.optionB, op.optionC, op.optionD,
+        op.questionId opQuestionid
+        from
+            exam_paper p
+        join exam_scoredetail es on p.id = es.paperId
+        left join exam_xzt_options op on op.questionId = es.questionId
+        where
+            p.id = #{paperId}
+        and
+            es.stuId = #{stuId}
+        order by
+            es.q_typeid
+    </select>
+
+    <resultMap id="paperDetailMap" type="StuPaperQuestion">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <collection property="stuQuestionsList" ofType="StuQuestionQueryVO">
+            <id column="questionId" property="questionId"></id>
+            <result column="questionTitle" property="questionTitle"></result>
+            <result column="stuAnswer" property="stuAnswer"></result>
+            <result column="grade" property="grade"></result>
+            <result column="q_typeid" property="q_typeid"></result>
+            <result column="correntAnswer" property="correntAnswer"></result>
+            <result column="correntScore" property="correntScore"></result>
+            <association property="questionXztOptions" javaType="QuestionXztOptions">
+                <id column="opid" property="id"></id>
+                <result column="optionA" property="optionA"></result>
+                <result column="optionB" property="optionB"></result>
+                <result column="optionC" property="optionC"></result>
+                <result column="optionD" property="optionD"></result>
+                <result column="opQuestionid" property="questionId"></result>
+            </association>
+        </collection>
+    </resultMap>
+
+</mapper>

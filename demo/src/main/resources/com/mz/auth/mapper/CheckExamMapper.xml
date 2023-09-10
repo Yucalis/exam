@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.auth.mapper.CheckExamMapper">
+
+<!--    List<CheckPaperVO> checkExamRecordData(CheckExamQuery checkExamQuery);-->
+    <select id="checkExamRecordData" resultMap="checkExamMap">
+        select exam_scoredetail.*, t_student.username stuname, exam_paper.name papername
+        from exam_scoredetail
+        left join t_student on exam_scoredetail.stuId = t_student.id
+        left join exam_paper on exam_scoredetail.paperId = exam_paper.id
+        <include refid="whereSql"></include>
+        order by id desc
+        limit #{offset}, #{page}
+    </select>
+
+    <resultMap id="checkExamMap" type="com.mz.auth.entity.CheckPaperVO">
+        <id column="id" property="id"></id>
+        <result column="stuId" property="stuId"></result>
+        <result column="paperId" property="paperId"></result>
+        <result column="questionId" property="questionId"></result>
+        <result column="questionTitle" property="questionTitle"></result>
+        <result column="questionAnswer" property="questionAnswer"></result>
+        <result column="questionScore" property="questionScore"></result>
+        <result column="correntAnswer" property="correntAnswer"></result>
+        <result column="correntScore" property="correntScore"></result>
+        <association property="student" javaType="com.mz.auth.entity.Student">
+            <id column="stuId" property="id"></id>
+            <result column="stuname" property="username"></result>
+        </association>
+        <association property="paper" javaType="com.mz.auth.entity.Paper">
+            <id column="paperId" property="id"></id>
+            <result column="papername" property="name"></result>
+        </association>
+    </resultMap>
+
+<!--    Long checkExamRecordTotal(CheckExamQuery checkExamQuery);-->
+    <select id="checkExamRecordTotal" resultType="Long">
+        select count(*)
+        from exam_scoredetail
+        left join t_student on exam_scoredetail.stuId = t_student.id
+        left join exam_paper on exam_scoredetail.paperId = exam_paper.id
+        <include refid="whereSql"></include>
+    </select>
+
+
+
+    <sql id="whereSql">
+        <where>
+            q_typeid = 4
+            <if test="paperId != null and paperId != ''">
+                and paperId = #{paperId}
+            </if>
+            <if test="questionId != null and questionId != ''">
+                and questionId = #{questionId}
+            </if>
+        </where>
+    </sql>
+
+</mapper>
